@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>小瓜地理冲冲冲</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="app">
+    <!-- 状态栏占位 -->
+    <div class="status-bar"></div>
+
+    <!-- TabBar -->
+    <nav class="tabbar" id="tabbar">
+      <div class="tab-item active" data-tab="home">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+        <span class="tab-text">首页</span>
+      </div>
+      <div class="tab-item" data-tab="report">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 20V10M12 20V4M6 20v-6"/>
+        </svg>
+        <span class="tab-text">报告</span>
+      </div>
+      <div class="tab-item" data-tab="wrong">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="9" y1="15" x2="15" y2="15"/>
+        </svg>
+        <span class="tab-text">错题</span>
+        <span class="badge" id="wrongBadge">0</span>
+      </div>
+      <div class="tab-item" data-tab="profile">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span class="tab-text">我的</span>
+      </div>
+    </nav>
+
+    <!-- 页面容器 -->
+    <main class="main-content">
+      <!-- 首页 -->
+      <section class="page active" id="page-home">
+        <div class="header-section">
+          <div class="app-logo">
+            <svg viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="20" fill="url(#logoGradient)"/>
+              <path d="M20 8L24 16H16L20 8Z" fill="#fff"/>
+              <circle cx="20" cy="24" r="6" stroke="#fff" stroke-width="2" fill="none"/>
+              <path d="M20 18V24L23 27" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="logoGradient" x1="0" y1="0" x2="40" y2="40">
+                  <stop offset="0%" stop-color="#007AFF"/>
+                  <stop offset="100%" stop-color="#5856D6"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <h1 class="app-title">小瓜地理冲冲冲</h1>
+        </div>
+
+        <div class="streak-card">
+          <div class="streak-glow"></div>
+          <div class="streak-content">
+            <div class="streak-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+              </svg>
+            </div>
+            <div class="streak-info">
+              <span class="streak-num" id="streakDays">0</span>
+              <span class="streak-label">天连续打卡</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-card">
+          <div class="progress-header">
+            <span class="progress-title">今日目标</span>
+            <span class="progress-count" id="todayProgress">0/7</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progressBar"></div>
+          </div>
+          <p class="progress-tip">距离高考 <span id="daysToGaokao">58</span> 天</p>
+        </div>
+
+        <button class="start-btn" id="startBtn">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          开始刷题
+        </button>
+
+        <div class="quick-stats">
+          <div class="stat-card">
+            <span class="stat-value" id="totalAccuracy">0%</span>
+            <span class="stat-label">正确率</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="wrongCountHome">0</span>
+            <span class="stat-label">待复习</span>
+          </div>
+        </div>
+
+        <div class="wrong-reminder" id="wrongTip" style="display:none;">
+          <div class="reminder-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="8" x2="12" y2="12"/>
+              <line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+          </div>
+          <span>你有 <span class="highlight">0</span> 道错题待复习</span>
+          <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+      </section>
+
+      <!-- 答题页 -->
+      <section class="page" id="page-quiz">
+        <div class="quiz-header">
+          <button class="close-btn" id="closeQuiz">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+          <div class="quiz-progress">
+            <div class="quiz-progress-bar">
+              <div class="quiz-progress-fill" id="quizProgressFill"></div>
+            </div>
+            <span class="quiz-progress-text" id="quizProgressText">1 / 7</span>
+          </div>
+        </div>
+
+        <div class="quiz-content">
+          <div class="question-meta" id="questionTags"></div>
+          <div class="stem-card">
+            <p class="stem-text" id="stem"></p>
+          </div>
+          <div class="options" id="options"></div>
+          <div class="explanation" id="explanation">
+            <div class="explanation-header">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 16v-4M12 8h.01"/>
+              </svg>
+              <span>解析</span>
+            </div>
+            <p id="explanationText"></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 结果页 -->
+      <section class="page" id="page-result">
+        <div class="result-header">
+          <div class="result-icon" id="resultIcon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <h2 class="result-title" id="resultTitle">太棒了！</h2>
+          <p class="result-subtitle" id="resultSubtitle">继续保持！</p>
+        </div>
+
+        <div class="result-card">
+          <div class="accuracy-display">
+            <span class="accuracy-num" id="resultAccuracy">0%</span>
+            <span class="accuracy-label">正确率</span>
+          </div>
+          <div class="result-breakdown">
+            <div class="breakdown-item">
+              <span class="breakdown-num correct" id="resultCorrect">0</span>
+              <span class="breakdown-label">正确</span>
+            </div>
+            <div class="breakdown-divider"></div>
+            <div class="breakdown-item">
+              <span class="breakdown-num wrong" id="resultWrong">0</span>
+              <span class="breakdown-label">错误</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="streak-banner">
+          <div class="streak-badge">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <div class="streak-details">
+            <span class="streak-count" id="resultStreak">0</span>
+            <span class="streak-text">天连续打卡</span>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn-primary" id="backHomeBtn">返回首页</button>
+          <button class="btn-secondary" id="viewReportBtn">查看报告</button>
+        </div>
+      </section>
+
+      <!-- 报告页 -->
+      <section class="page" id="page-report">
+        <h2 class="page-title">学习报告</h2>
+
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="summary-num" id="reportTotal">0</span>
+            <span class="summary-label">累计刷题</span>
+          </div>
+          <div class="summary-item highlight">
+            <span class="summary-num" id="reportAccuracy">0%</span>
+            <span class="summary-label">总正确率</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-num" id="reportStreak">0</span>
+            <span class="summary-label">连续打卡</span>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            分类正确率
+          </h3>
+          <div class="category-list" id="categoryList"></div>
+        </div>
+
+        <div class="section-card warning">
+          <h3 class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+              <line x1="12" y1="9" x2="12" y2="13"/>
+              <line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            薄弱知识点
+          </h3>
+          <div class="weak-list" id="weakList"></div>
+        </div>
+
+        <div class="suggestion-card">
+          <div class="suggestion-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+            </svg>
+          </div>
+          <p class="suggestion-text" id="suggestion"></p>
+        </div>
+      </section>
+
+      <!-- 错题本页 -->
+      <section class="page" id="page-wrong">
+        <h2 class="page-title">错题本</h2>
+
+        <div class="empty-state" id="wrongEmpty">
+          <div class="empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
+          <p class="empty-title">太棒了！</p>
+          <p class="empty-desc">暂无错题，保持下去！</p>
+        </div>
+
+        <div class="wrong-list" id="wrongList"></div>
+
+        <button class="batch-btn" id="reviewAllBtn" style="display:none;">批量复习错题</button>
+      </section>
+
+      <!-- 个人中心 -->
+      <section class="page" id="page-profile">
+        <div class="profile-header">
+          <div class="profile-avatar">
+            <svg viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="20" fill="rgba(255,255,255,0.2)"/>
+              <circle cx="20" cy="16" r="8" stroke="#fff" stroke-width="2" fill="none"/>
+              <path d="M6 36c0-8 6-14 14-14s14 6 14 14" stroke="#fff" stroke-width="2" fill="none"/>
+            </svg>
+          </div>
+          <p class="profile-name">小瓜学习者</p>
+          <p class="profile-since">加入于 <span id="joinDate">今天</span></p>
+        </div>
+
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <span class="pstat-num" id="profileTotal">0</span>
+            <span class="pstat-label">累计刷题</span>
+          </div>
+          <div class="profile-stat">
+            <span class="pstat-num" id="profileAccuracy">0%</span>
+            <span class="pstat-label">总正确率</span>
+          </div>
+          <div class="profile-stat">
+            <span class="pstat-num" id="profileStreak">0</span>
+            <span class="pstat-label">连续打卡</span>
+          </div>
+          <div class="profile-stat">
+            <span class="pstat-num" id="profileWrong">0</span>
+            <span class="pstat-label">错题数</span>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <h3 class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="7"/>
+              <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+            </svg>
+            成就徽章
+          </h3>
+          <div class="achievement-list" id="achievementList"></div>
+        </div>
+
+        <button class="clear-btn" id="clearDataBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+          </svg>
+          清除学习数据
+        </button>
+      </section>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
